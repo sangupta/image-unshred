@@ -18,6 +18,7 @@
 
 package com.sangupta.image.unshred;
 
+
 public class RGB {
 	
 	private int red;
@@ -26,12 +27,23 @@ public class RGB {
 	
 	private int blue;
 	
+	private double y, u, v;
+	
 	public RGB(int value) {
 		this.red = (value >> 16) & 0xff;
 		this.green = (value >> 8) & 0xff;
 		this.blue = value & 0xff;
+		
+		y = this.red *  .299000 + this.green *  .587000 + this.blue *  .114000;
+		u = this.red * -.168736 + this.green * -.331264 + this.blue *  .500000 + 128;
+		v = this.red *  .500000 + this.green * -.418688 + this.blue * -.081312 + 128;
 	}
 	
+	public double distance(RGB other) {
+		double diff = ((this.u - other.u) * (this.u - other.u)) + ((this.v - other.v) * (this.v - other.v));
+		return Math.sqrt(diff);
+	}
+
 	@Override
 	public String toString() {
 		return "[" + this.red + ", " + this.green + ", " + this.blue + "]";
@@ -47,6 +59,18 @@ public class RGB {
 
 	public int getBlue() {
 		return blue;
+	}
+
+	public double getY() {
+		return y;
+	}
+
+	public double getU() {
+		return u;
+	}
+
+	public double getV() {
+		return v;
 	}
 
 }

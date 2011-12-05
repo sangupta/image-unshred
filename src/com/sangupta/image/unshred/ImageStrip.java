@@ -18,19 +18,34 @@
 
 package com.sangupta.image.unshred;
 
+import java.awt.image.BufferedImage;
+
 public class ImageStrip {
 	
 	private PixelColumn left;
 	
 	private PixelColumn right;
 	
-	private int height;
+	private BufferedImage image;
 	
-	public ImageStrip(int height) {
-		this.height = height;
+	private boolean used;
+	
+	private int position;
+	
+	public ImageStrip(int position, BufferedImage stripImage) {
+		this.position = position;
+		this.image = stripImage;
+		
+		int height = stripImage.getHeight();
 		
 		this.left = new PixelColumn(height);
 		this.right = new PixelColumn(height);
+		
+		int lastX = image.getWidth() - 1;
+		for(int y = 0; y < image.getHeight(); y++) {
+			this.left.setRGB(y, new RGB(image.getRGB(0, y)));
+			this.right.setRGB(y, new RGB(image.getRGB(lastX, y)));
+		}
 	}
 
 	public void setLeft(int y, RGB rgb) {
@@ -41,15 +56,27 @@ public class ImageStrip {
 		this.right.setRGB(y, rgb);
 	}
 
-	public int getHeight() {
-		return height;
-	}
-
 	public PixelColumn getLeft() {
 		return left;
 	}
 
 	public PixelColumn getRight() {
 		return right;
+	}
+
+	public BufferedImage getImage() {
+		return image;
+	}
+
+	public boolean isUsed() {
+		return used;
+	}
+
+	public void setUsed(boolean used) {
+		this.used = used;
+	}
+
+	public int getPosition() {
+		return position;
 	}
 }

@@ -21,48 +21,28 @@ package com.sangupta.image.unshred;
 public class PixelColumn {
 	
 	private int height;
-	
-	private int[] red;
-	
-	private int[] green;
-	
-	private int[] blue;
-	
-	private long sumRed = 0;
-	
-	private long sumGreen = 0;
-	
-	private long sumBlue = 0;
-	
-	private int valuesRead = 0;
+
+	private RGB[] rgb;
 	
 	public PixelColumn(int height) {
 		this.height = height;
-		
-		this.red = new int[height + 1];
-		this.green = new int[height + 1];
-		this.blue = new int[height + 1];
-	}
-
-	public void setRGB(int y, RGB rgb) {
-		this.red[y] = rgb.getRed();
-		this.green[y] = rgb.getGreen();
-		this.blue[y] = rgb.getBlue();
-		
-		sumRed += this.red[y];
-		sumGreen += this.green[y];
-		sumBlue += this.blue[y];
-		
-		valuesRead++;
+		this.rgb = new RGB[height + 1];
 	}
 	
-	public double averageRGB() {
-		long sum = this.sumRed + this.sumGreen + this.sumBlue;
-		return ((double) sum) / this.valuesRead;
+	public void setRGB(int y, RGB rgb) {
+		this.rgb[y] = rgb;
 	}
-
+	
 	public int getHeight() {
 		return height;
+	}
+
+	public double averageDistance(PixelColumn other) {
+		double distance = 0;
+		for(int i = 0; i < this.height; i++) {
+			distance += this.rgb[i].distance(other.rgb[i]);
+		}
+		return distance / this.height;
 	}
 
 }
