@@ -238,15 +238,28 @@ public class ImageUnshred {
 		double average = sum / width;
 		double ratio = maxDiff / minDiff;
 		
-		for(int index = 0; index < width; index++) {
-			if(distances[index] > average) {
-				double currentRatio = distances[index] / minDiff;
-				if((currentRatio / ratio) > 0.3) {
-					this.stripWidth = index + 1;
-					break;
+		double compareRatio = 0.9;
+		boolean stripWidthComputed = false;
+		do {
+			for(int index = 0; index < width; index++) {
+				if(distances[index] > average) {
+					double currentRatio = distances[index] / minDiff;
+					if((currentRatio / ratio) > compareRatio) {
+						int stripe = index + 1;
+						
+						if(width % stripe == 0) {
+							this.stripWidth = stripe;
+							stripWidthComputed = true;
+							break;
+						}
+					}
 				}
 			}
-		}
+			
+			// unable to compute the strip width
+			// reduce the ratio by 0.5
+			compareRatio -= 0.1;
+		} while(!stripWidthComputed);
 
 		if(this.stripWidth == 0) {
 			stripWidth = 32;
