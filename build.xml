@@ -32,6 +32,9 @@
 				<attribute name="Build-Number" value="${build.number}" />
 				<attribute name="Build-Date" value="${BUILD.TIME}" />
 				<attribute name="Main-Class" value="com.sangupta.image.unshred.ImageMain" />
+				<attribute name="Author" value="Sandeep Gupta" />
+				<attribute name="Project-Home" value="https://github.com/sangupta/image-unshred" />
+				<attribute name="Author-Home" value="http://www.sangupta.com" />
 			</manifest>
 		</jar>
 		
