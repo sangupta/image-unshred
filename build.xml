@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Image Unshredder" default="default">
+	
+	<property name="test.images.folder" value="test-images" />
+	<property name="src.folder" value="src" />
+	<property name="stage.folder" value="stage" />
+	<property name="project.name" value="image-unshred" />
+	
+	<tstamp>
+		<format property="BUILD.TIME" pattern="yyyy/MM/dd:HH:mm:ss" />
+	</tstamp>
+	
+	
+	<target name="default" description="Build the project JAR.">
+		<!-- clean stage folder -->
+		<delete dir="${stage.folder}" />
+		<mkdir dir="${stage.folder}" />
+
+		<!-- update the build number -->
+		<buildnumber file="build.number" />
+		
+		<!-- compile sources -->
+		<javac srcdir="${src.folder}" destdir="${stage.folder}" debug="false" optimize="true" />
+		
+		<!-- package -->
+		<jar destfile="${project.name}.jar">
+			<fileset dir="${stage.folder}" />
+			<manifest>
+				<attribute name="Product-Name" value="Image Unshredder" />
+				<attribute name="Product-Version" value="1.0" />
+				<attribute name="Build-Number" value="${build.number}" />
+				<attribute name="Build-Date" value="${BUILD.TIME}" />
+				<attribute name="Main-Class" value="com.sangupta.image.unshred.ImageMain" />
+			</manifest>
+		</jar>
+		
+		<!-- clean stage -->
+		<delete dir="${stage.folder}" />
+	</target>
+	
+	<target name="cleanDownloadedImages" description="Remove all downloaded images">
+		<delete dir="${test.images.folder}" />
+	</target>
+
+	<target name="downloadImages" description="Download sample images from the internet">
+		<mkdir dir="${test.images.folder}" />
+        <get dest="${test.images.folder}" src="http://farm8.staticflickr.com/7156/6437676555_f5e164d2b1_z_d.jpg" usetimestamp="true" />
+    </target>
+
+</project>
