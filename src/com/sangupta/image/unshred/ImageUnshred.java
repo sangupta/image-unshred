@@ -45,7 +45,7 @@ public class ImageUnshred {
 		if(args.length == 1) {
 			imageUrl = args[0];
 		} else {
-			imageUrl = "shredded.png";
+			imageUrl = "tree40.jpg";
 		}
 
 		ImageUnshred unshredder = new ImageUnshred();
@@ -167,10 +167,56 @@ public class ImageUnshred {
 	private void findStripWidth() {
 		log("finding strip width...");
 		
-		// for now we know the strip width
-		this.stripWidth = 32;
+		final int height = image.getHeight();
+		final int width = image.getWidth();
 		
-		log("strip width=" + this.stripWidth);
+		// from the start - scan each pixel strip vertically
+		// and then see if the distance has gone above a threshold
+		// store the value for some of the ones
+		// and then check for max mean values
+
+		// compute the max and min
+		double minDiff = Double.MAX_VALUE, maxDiff = 0, sum = 0;
+		double[] distances = new double[width + 1];
+		for(int index = 0; index < width - 1; index++) {
+			PixelColumn left = new PixelColumn(height);
+			PixelColumn right = new PixelColumn(height);
+			for(int y = 0; y < height; y++) {
+				left.setRGB(y, new RGB(image.getRGB(index, y)));
+				right.setRGB(y, new RGB(image.getRGB(index + 1, y)));
+			}
+			
+			double distance = left.averageDistance(right);
+			if(distance < minDiff) {
+				minDiff = distance;
+			}
+			if(distance > maxDiff) {
+				maxDiff = distance;
+			}
+			
+			sum += distance;
+			distances[index] = distance;
+		}
+		
+		// find the average and ratio of max/min
+		double average = sum / width;
+		double ratio = maxDiff / minDiff;
+		
+		for(int index = 0; index < width; index++) {
+			if(distances[index] > average) {
+				double currentRatio = distances[index] / minDiff;
+				if((currentRatio / ratio) > 0.5) {
+					this.stripWidth = index + 1;
+					break;
+				}
+			}
+		}
+
+		if(this.stripWidth == 0) {
+			stripWidth = 32;
+		}
+		
+		log("Strip width found as " + this.stripWidth);
 	}
 
 	/**
