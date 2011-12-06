@@ -42,7 +42,7 @@ public class ImageUnshred {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		if(args.length ==0 || args.length > 2) {
+		if(args.length == 0 || args.length > 2) {
 			System.out.println("Usage: $ java -jar image-unshred.jar unshred <image> <width>");
 			System.out.println("");
 			System.out.println("    <image>    the path of the image that needs to be un-shredded");
@@ -55,6 +55,17 @@ public class ImageUnshred {
 		}
 		
 		String imageUrl = args[0];
+		File file = new File(imageUrl);
+		
+		if(!file.exists()) {
+			System.out.println("The given image file does not exists.");
+			return;
+		}
+
+		if(file.isDirectory()) {
+			System.out.println("Given image is a directory, not a file.");
+			return;
+		}
 
 		ImageUnshred unshredder = new ImageUnshred();
 		if(args.length == 2) {
@@ -235,16 +246,37 @@ public class ImageUnshred {
 		}
 		
 		// find the average and ratio of max/min
-		double average = sum / width;
-		double ratio = maxDiff / minDiff;
+		final double average = sum / width;
+		final double ratio = maxDiff / minDiff;
 		
-		double compareRatio = 0.9;
+		// compute the comparison ratio
+		double lastAverage = average; 
+		double maxAverage = 0;
+		do {
+			int maxCount = 0;
+			double maxSum = 0;
+			for(int index = 0; index < width; index++) {
+				if(distances[index] > lastAverage) {
+					maxSum += distances[index];
+					maxCount++;
+				}
+			}
+			maxAverage = maxSum / maxCount;
+			if((maxAverage / lastAverage) < 1.75) {
+				break;
+			}
+
+			lastAverage = maxAverage;
+		} while(true);
+		
 		boolean stripWidthComputed = false;
+		double compareRatio = 2.0;
 		do {
 			for(int index = 0; index < width; index++) {
-				if(distances[index] > average) {
-					double currentRatio = distances[index] / minDiff;
-					if((currentRatio / ratio) > compareRatio) {
+				double distance = distances[index];
+				if(distance > average) {
+					double currentRatio = distance / minDiff;
+					if((ratio / currentRatio) < compareRatio) {
 						int stripe = index + 1;
 						
 						if(width % stripe == 0) {
@@ -263,9 +295,10 @@ public class ImageUnshred {
 
 		if(this.stripWidth == 0) {
 			stripWidth = 32;
+			log("Default strip width to 32 pixels");
+		} else {
+			log("Strip width found as " + this.stripWidth);
 		}
-		
-		log("Strip width found as " + this.stripWidth);
 	}
 
 	/**
@@ -277,7 +310,8 @@ public class ImageUnshred {
 	 */
 	private void loadImage(String imageUrl) throws MalformedURLException, IOException {
 		log("loading image...");
-		image = ImageIO.read(new File(imageUrl));
+		File file = new File(imageUrl);
+		image = ImageIO.read(file);
 		log("image loaded.");
 	}
 	
