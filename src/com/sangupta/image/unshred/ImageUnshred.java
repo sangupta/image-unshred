@@ -36,16 +36,18 @@ public class ImageUnshred {
 	
 	private static boolean LOGS_ENABLED = true;
 	
-	private int stripWidth;
+	private int stripWidth = -1;
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		if(args.length != 1) {
-			System.out.println("Usage: $ java -jar image-unshred.jar unshred <image>");
+		if(args.length ==0 || args.length > 2) {
+			System.out.println("Usage: $ java -jar image-unshred.jar unshred <image> <width>");
 			System.out.println("");
 			System.out.println("    <image>    the path of the image that needs to be un-shredded");
+			System.out.println("    <width>    the width of the shred strip, if known ");
+			System.out.println("               if not known, the program will try and auto-detect the value ");
 			System.out.println("");
 			System.out.println("For an original image as original.png the reconstructed image is created as");
 			System.out.println("original.reconstructed.png. Supported image formats are GIF, JPG, and PNG.");
@@ -53,8 +55,12 @@ public class ImageUnshred {
 		}
 		
 		String imageUrl = args[0];
-		
+
 		ImageUnshred unshredder = new ImageUnshred();
+		if(args.length == 2) {
+			int stripWidth = Integer.parseInt(args[1]);
+			unshredder.stripWidth = stripWidth;
+		}
 		
 		final long start = System.currentTimeMillis(); 
 		// load the image
@@ -190,7 +196,12 @@ public class ImageUnshred {
 	 *  
 	 */
 	private void findStripWidth() {
-		log("finding strip width...");
+		if(this.stripWidth != -1) {
+			log("Strip width already provided as " + this.stripWidth + ", skipping auto detection.");
+			return;
+		}
+		
+		log("Finding strip width...");
 		
 		final int height = image.getHeight();
 		final int width = image.getWidth();

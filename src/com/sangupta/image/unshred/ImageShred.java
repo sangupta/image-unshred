@@ -51,7 +51,7 @@ public class ImageShred {
 			System.out.println("Usage: $ java -jar image-unshred.jar shred <image> <shreds>");
 			System.out.println("");
 			System.out.println("    <image>    the path of the image that needs to be shredded");
-			System.out.println("    <shreds>   the number of shreds to be created");
+			System.out.println("    <width>    the width of the shred strip");
 			System.out.println("");
 			System.out.println("For an original image as original.png the shredded image is created as");
 			System.out.println("original.shredded.png. Supported image formats are GIF, JPG, and PNG.");

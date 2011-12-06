@@ -28,3 +28,7 @@ desktop.ini
 
 # Project specific
 *.png
+*.jpg
+*.gif
+*.jar
+build.number
