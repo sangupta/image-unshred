@@ -34,20 +34,26 @@ public class ImageUnshred {
 	
 	private BufferedImage reconstructed = null;
 	
+	private static boolean LOGS_ENABLED = true;
+	
 	private int stripWidth;
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		String imageUrl;
-		
-		if(args.length == 1) {
-			imageUrl = args[0];
-		} else {
-			imageUrl = "tree40.jpg";
+		if(args.length != 1) {
+			System.out.println("Usage: $ java -jar image-unshred.jar unshred <image>");
+			System.out.println("");
+			System.out.println("    <image>    the path of the image that needs to be un-shredded");
+			System.out.println("");
+			System.out.println("For an original image as original.png the reconstructed image is created as");
+			System.out.println("original.reconstructed.png. Supported image formats are GIF, JPG, and PNG.");
+			return;
 		}
-
+		
+		String imageUrl = args[0];
+		
 		ImageUnshred unshredder = new ImageUnshred();
 		
 		final long start = System.currentTimeMillis(); 
@@ -64,9 +70,26 @@ public class ImageUnshred {
 		log("Total time taken: " + (end - start) + " ms.");
 		
 		// write the reconstructed image to disk
-		unshredder.writeReconstructed("reconstructed.png");
+		File fileToWrite = new File(imageUrl);
+		unshredder.writeReconstructed(getUnshreddedImageName(fileToWrite.getAbsolutePath()));
 		
 		log("Reconstructed image written to disk.");
+	}
+	
+	public static boolean unshredImage(String shreddedImagePath, String reconstructedImage) {
+		File shreddedImage = new File(shreddedImagePath);
+		try {
+			LOGS_ENABLED = false;
+			ImageUnshred unshredder = new ImageUnshred();
+			unshredder.loadImage(shreddedImage.getAbsolutePath());
+			unshredder.findStripWidth();
+			unshredder.unshred();
+			unshredder.writeReconstructed(reconstructedImage);
+			return true;
+		} catch(Exception e) {
+		}
+		LOGS_ENABLED = true;
+		return false;
 	}
 
 	/**
@@ -76,8 +99,10 @@ public class ImageUnshred {
 	 * @throws IOException
 	 */
 	private void writeReconstructed(String fileName) throws IOException {
+		int index = fileName.lastIndexOf('.');
+		String extension = fileName.substring(index + 1);
 		if(this.reconstructed != null) {
-			ImageIO.write(this.reconstructed, "png", new File(fileName));
+			ImageIO.write(this.reconstructed, extension, new File(fileName));
 		}
 	}
 
@@ -205,7 +230,7 @@ public class ImageUnshred {
 		for(int index = 0; index < width; index++) {
 			if(distances[index] > average) {
 				double currentRatio = distances[index] / minDiff;
-				if((currentRatio / ratio) > 0.5) {
+				if((currentRatio / ratio) > 0.3) {
 					this.stripWidth = index + 1;
 					break;
 				}
@@ -238,10 +263,18 @@ public class ImageUnshred {
 	 * @param logMessage
 	 */
 	private static void log(String logMessage) {
+		if(!LOGS_ENABLED) {
+			return;
+		}
+		
 		log(logMessage, true);
 	}
 
 	private static void log(String logMessage, boolean newLine) {
+		if(!LOGS_ENABLED) {
+			return;
+		}
+		
 		if("".equals(logMessage)) {
 			System.out.println("");
 			return;
@@ -256,4 +289,10 @@ public class ImageUnshred {
 		}
 	}
 
+	private static String getUnshreddedImageName(String filename) {
+		int index = filename.lastIndexOf('.');
+		String name = filename.substring(0, index);
+		String extension = filename.substring(index + 1);
+		return name + ".reconstructed." + extension;
+	}
 }
