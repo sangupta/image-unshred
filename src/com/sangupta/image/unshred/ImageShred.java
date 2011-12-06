@@ -48,7 +48,7 @@ public class ImageShred {
 	 */
 	public static void main(String[] args) {
 		if(args.length == 0 || args.length > 2) {
-			System.out.println("Usage: $ java -jar image-unshred.jar shred <image> <shreds>");
+			System.out.println("Usage: $ java -jar image-unshred.jar shred <image> <width>");
 			System.out.println("");
 			System.out.println("    <image>    the path of the image that needs to be shredded");
 			System.out.println("    <width>    the width of the shred strip");
@@ -117,6 +117,7 @@ public class ImageShred {
 			
 			ImageShred shred = new ImageShred();
 			shred.originalImage = originalImage;
+			System.out.println("Choosing slice width as " + sliceWidth);
 			shred.shredWidth = sliceWidth;
 			shred.loadImage(shreddedImage);
 			shred.shredImage();
@@ -197,7 +198,7 @@ public class ImageShred {
 		String extension = fileToWriteTo.substring(index + 1);
 		ImageIO.write(reconstructedImage, extension, new File(fileToWriteTo));
 		
-		System.out.println("Done shredding image.");
+		System.out.println("Done shredding image " + this.originalImageFile.getAbsolutePath());
 	}
 	
 	/**

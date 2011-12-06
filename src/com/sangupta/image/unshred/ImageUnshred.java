@@ -96,7 +96,6 @@ public class ImageUnshred {
 	public static boolean unshredImage(String shreddedImagePath, String reconstructedImage) {
 		File shreddedImage = new File(shreddedImagePath);
 		try {
-			LOGS_ENABLED = false;
 			ImageUnshred unshredder = new ImageUnshred();
 			unshredder.loadImage(shreddedImage.getAbsolutePath());
 			unshredder.findStripWidth();
@@ -105,7 +104,6 @@ public class ImageUnshred {
 			return true;
 		} catch(Exception e) {
 		}
-		LOGS_ENABLED = true;
 		return false;
 	}
 
