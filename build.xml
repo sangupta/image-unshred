@@ -45,6 +45,10 @@
 	<target name="cleanDownloadedImages" description="Remove all downloaded images">
 		<delete dir="${test.images.folder}" />
 	</target>
+	
+	<target name="cleanGeneratedImages" description="Clean all images generated using the application">
+		<delete dir="${test.images.folder}" includes="*.reconstructed.*, *.shredded.*" />
+	</target>
 
 	<target name="downloadImages" description="Download sample images from the internet">
 		<mkdir dir="${test.images.folder}" />
