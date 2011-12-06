@@ -79,7 +79,7 @@ public class ImageUnshred {
 		File fileToWrite = new File(imageUrl);
 		unshredder.writeReconstructed(getUnshreddedImageName(fileToWrite.getAbsolutePath()));
 		
-		log("Reconstructed image written to disk.");
+		log("Reconstructed image written to disk as " + fileToWrite.getAbsolutePath());
 	}
 	
 	public static boolean unshredImage(String shreddedImagePath, String reconstructedImage) {
