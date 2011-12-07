@@ -23,7 +23,8 @@ Shred a given image into stripes of the given width, shuffles the stripes and cr
 	<image>    the path of the image that needs to be shredded
 	<width>    the width of the shred strip
 	
-	For an original image as original.png the shredded image is created as original.shredded.png. Supported image formats are GIF, JPG, and PNG.
+	For an original image as original.png the shredded image is created as original.shredded.png. 
+	Supported image formats are GIF, JPG, and PNG.
 	
 ImageUnshred
 ------------
@@ -32,7 +33,8 @@ Unshreds the given image from the previously shredded image.
     $ java -jar image-unshred.jar unshred <image> <width>
 	
 	<image>    the path of the image that needs to be shredded
-	<width>    the width of the shred strip, if known. If the width is not known, the code will try and attempt to automatically find out the shred width
+	<width>    the width of the shred strip, if known. If the width is not known, 
+	the code will try and attempt to automatically find out the shred width
 
 ImageUnshredderTest
 -------------------
@@ -42,6 +44,18 @@ A test suite that reads all images from a given folder, shreds the images random
 	
 	<folder>    folder containing a set of original images. Supported image formats are GIF, JPG and PNG
 	
+Further Improvements Areas
+--------------------------
+The code is not 100% perfect and needs a lot of improvement. I have noticed the following areas where code may be improved:
+
+1. Auto detection of strip width fails when the image has not many front objects - specifically between the strips which have a similar background. For example, two strips of a clear sky with very little clouds.
+
+2. On similar lines, unshredding may result in a shifted image. It may look like the whole image was shifted to right and the spilled over part moved to the left side of the image. This again is due to presence of very similar strips which have a very low eucledian distance between them. I tried computing a value as,
+
+    Math.sqrt( ((r1 - r2) ^ 2) + (g1 - g2) ^ 2) + (b1 - b2) ^ 2) )
+
+which resulted in identifying of such confusions in the algorithm - though not 100%
+
 License
 -------
 
