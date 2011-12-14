@@ -56,6 +56,10 @@ The code is not 100% perfect and needs a lot of improvement. I have noticed the 
 
 which resulted in identifying of such confusions in the algorithm - though not 100%
 
+Spolier Alert
+-------------
+The solution is posted here for my reference only. I suggest that you do not use the code below for solving the challenge. It would however be interesting to compare and know more, once you have solved the challenge yourself. Best of luck!
+
 License
 -------
 
